@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Filho na Fé</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #ca7300;
+            --accent-color: #4cd964;
+            --background-color: #f9f7ff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            /* background-image: url('https://i.imgur.com/JFHe7jJ.png'); */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin: 40px 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--secondary-color);
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        input,
+        textarea {
+            width: calc(100% - 32px);
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(48, 8, 156, 0.2);
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(106, 61, 232, 0.3);
+        }
+
+        button:hover {
+            background-color: #5a2dd8;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(106, 61, 232, 0.4);
+        }
+
+        .address-section {
+            background-color: rgba(106, 61, 232, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .address-title {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 1.2rem;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .emoji {
+            font-size: 1.5rem;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .success-message {
+            display: none;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .required::after {
+            content: " *";
+            color: var(--secondary-color);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .col {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>✨ Meu Filho na Fé ✨</h1>
+        <p class="subtitle">"Ide, pois, e ensinai todos os povos, batizando-os em nome do Pai, do Filho e do Espírito
+            Santo." (Mt 28:19)</p>
+
+        <form id="teenForm">
+            <div class="form-group">
+                <label for="date" class="required">Data</label>
+                <input type="text" id="date" name="date" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="name" class="required">Nome Completo</label>
+                <input type="text" id="name" name="name" placeholder="Digite seu nome completo" required>
+            </div>
+
+            <div class="col">
+                <div class="form-group">
+                    <label for="birthdate" class="required">Data de Nascimento</label>
+                    <input type="date" id="birthdate" name="birthdate" required>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="cep" class="required">CEP</label>
+                        <div style="display: flex; align-items: center;">
+                            <input type="text" id="cep" name="cep" placeholder="Digite seu CEP" maxlength="9" required>
+                            <div class="loading" id="cepLoading"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-group">
+                        <label for="phone" class="required">Telefone</label>
+                        <input type="text" id="phone" name="phone" placeholder="(00) 00000-0000" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="address-section">
+                <h3 class="address-title"><span class="emoji">🏠</span>Endereço</h3>
+
+                <div class="form-group">
+                    <label for="street">Endereço</label>
+                    <input type="text" id="street" name="street" readonly>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="number" class="required">Número</label>
+                            <input type="text" id="number" name="number" placeholder="Nº da residência" required>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="neighborhood">Bairro</label>
+                            <input type="text" id="neighborhood" name="neighborhood" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="city">Cidade</label>
+                            <input type="text" id="city" name="city" readonly>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="state">Estado</label>
+                            <input type="text" id="state" name="state" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="reference">Ponto de Referência</label>
+                <textarea id="reference" name="reference" rows="2"
+                    placeholder="Um ponto de referência próximo à sua casa"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="faithFather" class="required">Pai na Fé</label>
+                <input type="text" id="faithFather" name="faithFather" placeholder="Nome do seu pai na fé" required>
+            </div>
+
+            <button type="submit">Enviar Cadastro</button>
+
+            <div class="success-message" id="successMessage">
+                <h3>🎉 Cadastro realizado com sucesso! 🎉</h3>
+                <p>Estamos felizes por você fazer parte da nossa comunidade!</p>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Formatar a data atual no formato brasileiro (dd/mm/aaaa)
+        function formatCurrentDate() {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // Preencher o campo de data com a data atual
+        document.getElementById('date').value = formatCurrentDate();
+
+        // Formatar o CEP enquanto o usuário digita
+        document.getElementById('cep').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) {
+                value = value.substring(0, 5) + '-' + value.substring(5, 8);
+            }
+            e.target.value = value;
+
+            // Buscar endereço quando o CEP tiver 8 dígitos
+            if (value.replace('-', '').length === 8) {
+                searchCEP(value);
+            }
+        });
+
+        // Formatar o telefone enquanto o usuário digita
+        document.getElementById('phone').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+
+            if (value.length > 0) {
+                value = '(' + value;
+
+                if (value.length > 3) {
+                    value = value.substring(0, 3) + ') ' + value.substring(3);
+                }
+
+                if (value.length > 10) {
+                    value = value.substring(0, 10) + '-' + value.substring(10);
+                }
+
+                if (value.length > 15) {
+                    value = value.substring(0, 15);
+                }
+            }
+
+            e.target.value = value;
+        });
+
+        // Buscar endereço pelo CEP usando a API ViaCEP
+        function searchCEP(cep) {
+            const cleanCEP = cep.replace(/\D/g, '');
+
+            if (cleanCEP.length !== 8) return;
+
+            const loading = document.getElementById('cepLoading');
+            loading.style.display = 'inline-block';
+
+            fetch(`https://viacep.com.br/ws/${cleanCEP}/json/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.erro) {
+                        document.getElementById('street').value = data.logradouro;
+                        document.getElementById('neighborhood').value = data.bairro;
+                        document.getElementById('city').value = data.localidade;
+                        document.getElementById('state').value = data.uf;
+                    } else {
+                        alert('CEP não encontrado. Por favor, verifique o CEP informado.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar CEP:', error);
+                    alert('Erro ao buscar o CEP. Por favor, tente novamente mais tarde.');
+                })
+                .finally(() => {
+                    loading.style.display = 'none';
+                });
+        }
+
+        document.getElementById('birthdate').addEventListener('change', function(e) {
+            const selectedDate = new Date(e.target.value);
+            const today = new Date();
+            
+            if (selectedDate > today) {
+                alert('A data de nascimento não pode ser no futuro.');
+                e.target.value = '';
+            }
+        });
+
+        // Manipular o envio do formulário
+        document.getElementById('teenForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            // Mostrar indicador de carregamento ou desabilitar o botão aqui
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            submitButton.disabled = true;
+            submitButton.textContent = "Enviando...";
+            
+            // Coletar dados do formulário
+            const formData = {
+                date: document.getElementById('date').value,
+                name: document.getElementById('name').value,
+                birthdate: document.getElementById('birthdate').value,
+                cep: document.getElementById('cep').value,
+                phone: document.getElementById('phone').value,
+                street: document.getElementById('street').value,
+                number: document.getElementById('number').value,
+                neighborhood: document.getElementById('neighborhood').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                reference: document.getElementById('reference').value,
+                faithFather: document.getElementById('faithFather').value
+            };
+            
+            // URL do seu Web App do Google Apps Script
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbw7lB70aZPgAwDBhbO9bzyiDlL2oNdQV6vRUu3uO2hTaXXCSMQEoBd8afR-eFeraEWQBw/exec';
+            
+            // Enviar dados para o Google Sheets usando XMLHttpRequest em vez de fetch
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', scriptURL);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // Mostrar mensagem de sucesso
+                    document.getElementById('successMessage').style.display = 'block';
+                    document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Resetar o formulário após alguns segundos
+                    setTimeout(() => {
+                        document.getElementById('teenForm').reset();
+                        document.getElementById('date').value = formatCurrentDate();
+                        document.getElementById('successMessage').style.display = 'none';
+                    }, 5000);
+                } else {
+                    console.error('Erro:', xhr.responseText);
+                    alert('Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.');
+                }
+                
+                // Restaurar o botão
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            };
+            xhr.onerror = function() {
+                console.error('Erro de rede');
+                alert('Ocorreu um erro de rede. Por favor, verifique sua conexão e tente novamente.');
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            };
+            xhr.send(JSON.stringify(formData));
+        });
+    </script>
+</body>
+
+</html>
