@@ -404,7 +404,26 @@
             submitButton.disabled = true;
             submitButton.textContent = "Enviando...";
             
-            // Coletar dados do formulário
+            // Criar um iframe oculto para receber a resposta sem redirecionar a página
+            let targetIframe = document.getElementById('hidden-iframe');
+            if (!targetIframe) {
+              targetIframe = document.createElement('iframe');
+              targetIframe.id = 'hidden-iframe';
+              targetIframe.name = 'hidden-iframe';
+              targetIframe.style.display = 'none';
+              document.body.appendChild(targetIframe);
+            }
+            
+            // URL do seu Web App do Google Apps Script
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbyvh1St0yrAcbBzB03RB70rcIckv2-nMiqdKfhGWGcchTOuyViYInRBJ5Xx1DNOWw8cZQ/exec';
+            
+            // Criar um formulário temporário para enviar os dados
+            const tempForm = document.createElement('form');
+            tempForm.method = 'POST';
+            tempForm.action = scriptURL;
+            tempForm.target = 'hidden-iframe';
+            
+            // Adicionar todos os campos do formulário
             const formData = {
                 date: document.getElementById('date').value,
                 name: document.getElementById('name').value,
@@ -420,41 +439,54 @@
                 faithFather: document.getElementById('faithFather').value
             };
             
-            // URL do seu Web App do Google Apps Script
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbw7lB70aZPgAwDBhbO9bzyiDlL2oNdQV6vRUu3uO2hTaXXCSMQEoBd8afR-eFeraEWQBw/exec';
+            // Log para depuração
+            console.log("Dados a serem enviados:", formData);
             
-            // Enviar dados para o Google Sheets usando XMLHttpRequest em vez de fetch
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', scriptURL);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    // Mostrar mensagem de sucesso
-                    document.getElementById('successMessage').style.display = 'block';
-                    document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
-                    
-                    // Resetar o formulário após alguns segundos
-                    setTimeout(() => {
-                        document.getElementById('teenForm').reset();
-                        document.getElementById('date').value = formatCurrentDate();
-                        document.getElementById('successMessage').style.display = 'none';
-                    }, 5000);
-                } else {
-                    console.error('Erro:', xhr.responseText);
-                    alert('Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.');
-                }
+            // Adicionar cada campo como um input hidden
+            for (const key in formData) {
+              if (formData.hasOwnProperty(key)) {
+                const hiddenField = document.createElement('input');
+                hiddenField.type = 'hidden';
+                hiddenField.name = key;
+                hiddenField.value = formData[key];
+                tempForm.appendChild(hiddenField);
+              }
+            }
+            
+            // Adicionar o formulário ao corpo do documento
+            document.body.appendChild(tempForm);
+            
+            // Configurar o evento de carregamento do iframe para mostrar a mensagem de sucesso
+            targetIframe.onload = function() {
+              console.log("Iframe carregado - resposta recebida");
+              
+              // Mostrar mensagem de sucesso
+              document.getElementById('successMessage').style.display = 'block';
+              document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
+              
+              // Resetar o formulário após alguns segundos
+              setTimeout(() => {
+                document.getElementById('teenForm').reset();
+                document.getElementById('date').value = formatCurrentDate();
+                document.getElementById('successMessage').style.display = 'none';
                 
                 // Restaurar o botão
                 submitButton.disabled = false;
                 submitButton.textContent = originalButtonText;
+              }, 5000);
+              
+              // Remover o formulário temporário
+              if (document.body.contains(tempForm)) {
+                document.body.removeChild(tempForm);
+              }
             };
-            xhr.onerror = function() {
-                console.error('Erro de rede');
-                alert('Ocorreu um erro de rede. Por favor, verifique sua conexão e tente novamente.');
-                submitButton.disabled = false;
-                submitButton.textContent = originalButtonText;
-            };
-            xhr.send(JSON.stringify(formData));
+            
+            // Log antes de enviar
+            console.log("Enviando formulário...");
+            
+            // Enviar o formulário
+            tempForm.submit();
+            console.log("Formulário enviado");
         });
     </script>
 </body>
