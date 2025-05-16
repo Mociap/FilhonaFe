@@ -400,41 +400,45 @@
             
             // Mostrar indicador de carregamento ou desabilitar o botão aqui
             const submitButton = this.querySelector('button[type="submit"]');
-            const originalButtonText = submitButton.textContent;
             submitButton.disabled = true;
             submitButton.textContent = "Enviando...";
             
             // URL do seu Web App do Google Apps Script
             const scriptURL = 'https://script.google.com/macros/s/AKfycbyvh1St0yrAcbBzB03RB70rcIckv2-nMiqdKfhGWGcchTOuyViYInRBJ5Xx1DNOWw8cZQ/exec';
             
-            // Criar um objeto FormData com os dados do formulário
-            const formData = new FormData();
-            
-            // Adicionar todos os campos do formulário
-            formData.append('date', document.getElementById('date').value);
-            formData.append('name', document.getElementById('name').value);
-            formData.append('birthdate', document.getElementById('birthdate').value);
-            formData.append('cep', document.getElementById('cep').value);
-            formData.append('phone', document.getElementById('phone').value);
-            formData.append('street', document.getElementById('street').value);
-            formData.append('number', document.getElementById('number').value);
-            formData.append('neighborhood', document.getElementById('neighborhood').value);
-            formData.append('city', document.getElementById('city').value);
-            formData.append('state', document.getElementById('state').value);
-            formData.append('reference', document.getElementById('reference').value);
-            formData.append('faithFather', document.getElementById('faithFather').value);
+            // Coletar todos os dados do formulário
+            const formData = {
+                date: document.getElementById('date').value,
+                name: document.getElementById('name').value,
+                birthdate: document.getElementById('birthdate').value,
+                cep: document.getElementById('cep').value,
+                phone: document.getElementById('phone').value,
+                street: document.getElementById('street').value,
+                number: document.getElementById('number').value,
+                neighborhood: document.getElementById('neighborhood').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                reference: document.getElementById('reference').value,
+                faithFather: document.getElementById('faithFather').value
+            };
             
             // Log para depuração
-            console.log("Enviando dados para:", scriptURL);
+            console.log("Dados a serem enviados:", formData);
             
-            // Enviar os dados usando fetch API
-            fetch(scriptURL, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                console.log("Resposta recebida:", response);
-                if (response.ok) {
+            // Método 1: Usando XMLHttpRequest (mais compatível com o Google Apps Script)
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', scriptURL, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            
+            // Converter os dados para formato de URL
+            const urlEncodedData = Object.keys(formData)
+                .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(formData[key]))
+                .join('&');
+            
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    console.log("Resposta recebida com sucesso:", xhr.responseText);
+                    
                     // Mostrar mensagem de sucesso
                     document.getElementById('successMessage').style.display = 'block';
                     document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
@@ -447,18 +451,25 @@
                         
                         // Restaurar o botão
                         submitButton.disabled = false;
-                        submitButton.textContent = originalButtonText;
+                        submitButton.textContent = "Enviar Cadastro";
                     }, 5000);
                 } else {
-                    throw new Error('Erro ao enviar o formulário');
+                    console.error("Erro na resposta:", xhr.status, xhr.statusText);
+                    alert('Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.');
+                    submitButton.disabled = false;
+                    submitButton.textContent = "Enviar Cadastro";
                 }
-            })
-            .catch(error => {
-                console.error('Erro:', error);
+            };
+            
+            xhr.onerror = function() {
+                console.error("Erro na requisição");
                 alert('Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.');
                 submitButton.disabled = false;
-                submitButton.textContent = originalButtonText;
-            });
+                submitButton.textContent = "Enviar Cadastro";
+            };
+            
+            console.log("Enviando dados via XMLHttpRequest:", urlEncodedData);
+            xhr.send(urlEncodedData);
         });
     </script>
 </body>
