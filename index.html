@@ -404,89 +404,61 @@
             submitButton.disabled = true;
             submitButton.textContent = "Enviando...";
             
-            // Criar um iframe oculto para receber a resposta sem redirecionar a página
-            let targetIframe = document.getElementById('hidden-iframe');
-            if (!targetIframe) {
-              targetIframe = document.createElement('iframe');
-              targetIframe.id = 'hidden-iframe';
-              targetIframe.name = 'hidden-iframe';
-              targetIframe.style.display = 'none';
-              document.body.appendChild(targetIframe);
-            }
-            
             // URL do seu Web App do Google Apps Script
             const scriptURL = 'https://script.google.com/macros/s/AKfycbyvh1St0yrAcbBzB03RB70rcIckv2-nMiqdKfhGWGcchTOuyViYInRBJ5Xx1DNOWw8cZQ/exec';
             
-            // Criar um formulário temporário para enviar os dados
-            const tempForm = document.createElement('form');
-            tempForm.method = 'POST';
-            tempForm.action = scriptURL;
-            tempForm.target = 'hidden-iframe';
+            // Criar um objeto FormData com os dados do formulário
+            const formData = new FormData();
             
             // Adicionar todos os campos do formulário
-            const formData = {
-                date: document.getElementById('date').value,
-                name: document.getElementById('name').value,
-                birthdate: document.getElementById('birthdate').value,
-                cep: document.getElementById('cep').value,
-                phone: document.getElementById('phone').value,
-                street: document.getElementById('street').value,
-                number: document.getElementById('number').value,
-                neighborhood: document.getElementById('neighborhood').value,
-                city: document.getElementById('city').value,
-                state: document.getElementById('state').value,
-                reference: document.getElementById('reference').value,
-                faithFather: document.getElementById('faithFather').value
-            };
+            formData.append('date', document.getElementById('date').value);
+            formData.append('name', document.getElementById('name').value);
+            formData.append('birthdate', document.getElementById('birthdate').value);
+            formData.append('cep', document.getElementById('cep').value);
+            formData.append('phone', document.getElementById('phone').value);
+            formData.append('street', document.getElementById('street').value);
+            formData.append('number', document.getElementById('number').value);
+            formData.append('neighborhood', document.getElementById('neighborhood').value);
+            formData.append('city', document.getElementById('city').value);
+            formData.append('state', document.getElementById('state').value);
+            formData.append('reference', document.getElementById('reference').value);
+            formData.append('faithFather', document.getElementById('faithFather').value);
             
             // Log para depuração
-            console.log("Dados a serem enviados:", formData);
+            console.log("Enviando dados para:", scriptURL);
             
-            // Adicionar cada campo como um input hidden
-            for (const key in formData) {
-              if (formData.hasOwnProperty(key)) {
-                const hiddenField = document.createElement('input');
-                hiddenField.type = 'hidden';
-                hiddenField.name = key;
-                hiddenField.value = formData[key];
-                tempForm.appendChild(hiddenField);
-              }
-            }
-            
-            // Adicionar o formulário ao corpo do documento
-            document.body.appendChild(tempForm);
-            
-            // Configurar o evento de carregamento do iframe para mostrar a mensagem de sucesso
-            targetIframe.onload = function() {
-              console.log("Iframe carregado - resposta recebida");
-              
-              // Mostrar mensagem de sucesso
-              document.getElementById('successMessage').style.display = 'block';
-              document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
-              
-              // Resetar o formulário após alguns segundos
-              setTimeout(() => {
-                document.getElementById('teenForm').reset();
-                document.getElementById('date').value = formatCurrentDate();
-                document.getElementById('successMessage').style.display = 'none';
-                
-                // Restaurar o botão
+            // Enviar os dados usando fetch API
+            fetch(scriptURL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log("Resposta recebida:", response);
+                if (response.ok) {
+                    // Mostrar mensagem de sucesso
+                    document.getElementById('successMessage').style.display = 'block';
+                    document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Resetar o formulário após alguns segundos
+                    setTimeout(() => {
+                        document.getElementById('teenForm').reset();
+                        document.getElementById('date').value = formatCurrentDate();
+                        document.getElementById('successMessage').style.display = 'none';
+                        
+                        // Restaurar o botão
+                        submitButton.disabled = false;
+                        submitButton.textContent = originalButtonText;
+                    }, 5000);
+                } else {
+                    throw new Error('Erro ao enviar o formulário');
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.');
                 submitButton.disabled = false;
                 submitButton.textContent = originalButtonText;
-              }, 5000);
-              
-              // Remover o formulário temporário
-              if (document.body.contains(tempForm)) {
-                document.body.removeChild(tempForm);
-              }
-            };
-            
-            // Log antes de enviar
-            console.log("Enviando formulário...");
-            
-            // Enviar o formulário
-            tempForm.submit();
-            console.log("Formulário enviado");
+            });
         });
     </script>
 </body>
