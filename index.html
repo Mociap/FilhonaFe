@@ -394,82 +394,91 @@
             }
         });
 
+        // Adicionar iframe oculto ao carregar a página
+        window.onload = function() {
+            // Criar iframe oculto se ainda não existir
+            if (!document.getElementById('hidden-iframe')) {
+                const iframe = document.createElement('iframe');
+                iframe.name = 'hidden-iframe';
+                iframe.id = 'hidden-iframe';
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+            }
+        };
+
         // Manipular o envio do formulário
         document.getElementById('teenForm').addEventListener('submit', function (e) {
             e.preventDefault();
             
-            // Mostrar indicador de carregamento ou desabilitar o botão aqui
+            // Mostrar indicador de carregamento
             const submitButton = this.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.textContent = "Enviando...";
             
-            // URL do seu Web App do Google Apps Script
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbyvh1St0yrAcbBzB03RB70rcIckv2-nMiqdKfhGWGcchTOuyViYInRBJ5Xx1DNOWw8cZQ/exec';
+            // URL do Google Form com o ID correto
+            const googleFormURL = 'https://docs.google.com/forms/d/e/1FAIpQLSdyFEa9yy-oeC7vtE5CS3SGCmgFtxG3PvxVwCFo5BDLX8/formResponse';
             
-            // Coletar todos os dados do formulário
-            const formData = {
-                date: document.getElementById('date').value,
-                name: document.getElementById('name').value,
-                birthdate: document.getElementById('birthdate').value,
-                cep: document.getElementById('cep').value,
-                phone: document.getElementById('phone').value,
-                street: document.getElementById('street').value,
-                number: document.getElementById('number').value,
-                neighborhood: document.getElementById('neighborhood').value,
-                city: document.getElementById('city').value,
-                state: document.getElementById('state').value,
-                reference: document.getElementById('reference').value,
-                faithFather: document.getElementById('faithFather').value
+            // Criar um formulário oculto
+            const hiddenForm = document.createElement('form');
+            hiddenForm.method = 'POST';
+            hiddenForm.action = googleFormURL;
+            hiddenForm.target = 'hidden-iframe';
+            hiddenForm.style.display = 'none';
+            
+            // Mapeamento dos campos do seu formulário para os campos do Google Form
+            const fieldMapping = {
+                'date': 'entry.1627516445',
+                'name': 'entry.743749700',
+                'birthdate': 'entry.1652853989',
+                'cep': 'entry.1504983257',
+                'phone': 'entry.2134624604',
+                'street': 'entry.666965551',
+                'number': 'entry.1758257213',
+                'neighborhood': 'entry.375658404',
+                'city': 'entry.668469887',
+                'state': 'entry.1092021185',
+                'reference': 'entry.2057586134',
+                'faithFather': 'entry.793810399'
             };
             
-            // Log para depuração
-            console.log("Dados a serem enviados:", formData);
+            // Adicionar campos ao formulário oculto
+            for (const field in fieldMapping) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = fieldMapping[field];
+                input.value = document.getElementById(field).value;
+                hiddenForm.appendChild(input);
+            }
             
-            // Método 1: Usando XMLHttpRequest (mais compatível com o Google Apps Script)
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', scriptURL, true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            
-            // Converter os dados para formato de URL
-            const urlEncodedData = Object.keys(formData)
-                .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(formData[key]))
-                .join('&');
-            
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    console.log("Resposta recebida com sucesso:", xhr.responseText);
+            // Configurar evento de carregamento do iframe
+            const iframe = document.getElementById('hidden-iframe');
+            iframe.onload = function() {
+                console.log("Formulário enviado com sucesso");
+                
+                // Mostrar mensagem de sucesso
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
+                
+                // Resetar o formulário após alguns segundos
+                setTimeout(() => {
+                    document.getElementById('teenForm').reset();
+                    document.getElementById('date').value = formatCurrentDate();
+                    document.getElementById('successMessage').style.display = 'none';
                     
-                    // Mostrar mensagem de sucesso
-                    document.getElementById('successMessage').style.display = 'block';
-                    document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
-                    
-                    // Resetar o formulário após alguns segundos
-                    setTimeout(() => {
-                        document.getElementById('teenForm').reset();
-                        document.getElementById('date').value = formatCurrentDate();
-                        document.getElementById('successMessage').style.display = 'none';
-                        
-                        // Restaurar o botão
-                        submitButton.disabled = false;
-                        submitButton.textContent = "Enviar Cadastro";
-                    }, 5000);
-                } else {
-                    console.error("Erro na resposta:", xhr.status, xhr.statusText);
-                    alert('Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.');
+                    // Restaurar o botão
                     submitButton.disabled = false;
                     submitButton.textContent = "Enviar Cadastro";
-                }
+                }, 5000);
             };
             
-            xhr.onerror = function() {
-                console.error("Erro na requisição");
-                alert('Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.');
-                submitButton.disabled = false;
-                submitButton.textContent = "Enviar Cadastro";
-            };
+            // Adicionar o formulário ao corpo do documento e enviá-lo
+            document.body.appendChild(hiddenForm);
+            hiddenForm.submit();
             
-            console.log("Enviando dados via XMLHttpRequest:", urlEncodedData);
-            xhr.send(urlEncodedData);
+            // Remover o formulário após o envio
+            setTimeout(() => {
+                document.body.removeChild(hiddenForm);
+            }, 1000);
         });
     </script>
 </body>
